@@ -1,0 +1,12 @@
+{
+    "ID":"BAFFABE97B9544068ED270838E18CE86",
+    "ActionKeyword":"timer",
+    "Name":"Timer",
+    "Description":"Set temporary timers and alarms",
+    "Author":"creativitRy",
+    "Version":"1.0.0",
+    "Language":"csharp",
+    "Website":"https://github.com/creativitRy/",
+    "ExecuteFileName":"WoxTimer.dll",
+	"IcoPath": "Images\\icon.png"
+}
