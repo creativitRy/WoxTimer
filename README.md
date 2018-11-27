@@ -1,5 +1,7 @@
 # Wox Timer
 
+![Timer](images/Preview.jpg)
+
 Plugin for Wox that adds a simple timer
 
 ### Usage

@@ -6,7 +6,7 @@
     "Author":"creativitRy",
     "Version":"1.0.0",
     "Language":"csharp",
-    "Website":"https://github.com/creativitRy/",
+    "Website":"https://github.com/creativitRy/WoxTimer",
     "ExecuteFileName":"WoxTimer.dll",
 	"IcoPath": "Images\\icon.png"
 }
