@@ -4,6 +4,12 @@
 
 Plugin for Wox that adds a simple timer
 
+### Installation
+
+Open Wox and type the following:
+
+```wpm install Timer```
+
 ### Usage
 
 Add a new timer by typing
