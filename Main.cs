@@ -14,6 +14,7 @@ namespace ctRy.WoxTimer
 	{
 		private PluginInitContext _context;
 		private readonly SortedSet<TimerData> Entries = new SortedSet<TimerData>();
+		private readonly object _lock = new object();
 
 		private Settings _settings;
 		private AlarmCompletionHandler _alarmCompletionHandler;
@@ -40,16 +41,19 @@ namespace ctRy.WoxTimer
 			var results = new List<Result>();
 			if (query.Terms.Length < 2 || query.Terms[1].Equals("list", StringComparison.OrdinalIgnoreCase))
 			{
-				foreach (var timerData in Entries)
+				lock (_lock)
 				{
-					var time = timerData.Time - DateTime.Now;
-					results.Add(new Result
+					foreach (var timerData in Entries)
 					{
-						Title = "Timer",
-						SubTitle = time.ToString("g"),
-						IcoPath = "Images\\icon.png",
-						Action = e => true
-					});
+						var time = timerData.Time - DateTime.Now;
+						results.Add(new Result
+						{
+							Title = "Timer",
+							SubTitle = time.ToString("g"),
+							IcoPath = "Images\\icon.png",
+							Action = e => true
+						});
+					}
 				}
 
 				return results;
@@ -57,20 +61,27 @@ namespace ctRy.WoxTimer
 
 			if (query.Terms[1].Equals("remove", StringComparison.OrdinalIgnoreCase))
 			{
-				foreach (var timerData in Entries)
+				lock (_lock)
 				{
-					var time = timerData.Time - DateTime.Now;
-					results.Add(new Result
+					foreach (var timerData in Entries)
 					{
-						Title = "Timer",
-						SubTitle = time.ToString("g"),
-						IcoPath = "Images\\icon.png",
-						Action = e =>
+						var time = timerData.Time - DateTime.Now;
+						results.Add(new Result
 						{
-							Entries.Remove(timerData);
-							return true;
-						}
-					});
+							Title = "Timer",
+							SubTitle = time.ToString("g"),
+							IcoPath = "Images\\icon.png",
+							Action = e =>
+							{
+								lock (_lock)
+								{
+									Entries.Remove(timerData);
+								}
+
+								return true;
+							}
+						});
+					}
 				}
 
 				return results;
@@ -129,10 +140,13 @@ namespace ctRy.WoxTimer
 				{
 					var time = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 					var timerData = new TimerData(time);
-					Entries.Add(timerData);
-					var t = new Thread(x => Alarm(hours * 3600 + minutes * 60 + seconds, timerData));
-					t.Start();
+					ThreadPool.QueueUserWorkItem(x => Alarm(hours * 3600 + minutes * 60 + seconds, timerData));
 					_context.API.ShowMsg("Timer Started", $"Timer will ring at {time:G}", "Images\\icon.png");
+					lock (_lock)
+					{
+						Entries.Add(timerData);
+					}
+
 					return true;
 				}
 			};
@@ -141,12 +155,20 @@ namespace ctRy.WoxTimer
 		private void Alarm(int secs, TimerData timerData)
 		{
 			Thread.Sleep(secs * 1000);
-			if (!Entries.Contains(timerData))
-				return;
+
+			lock (_lock)
+			{
+				if (!Entries.Contains(timerData))
+					return;
+			}
 
 			_context.API.ShowMsg("Timer ended", "", "Images\\icon.png");
 			_alarmCompletionHandler.Complete();
-			Entries.Remove(timerData);
+
+			lock (_lock)
+			{
+				Entries.Remove(timerData);
+			}
 		}
 	}
 }
