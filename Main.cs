@@ -16,6 +16,7 @@ namespace ctRy.WoxTimer
 		private readonly SortedSet<TimerData> Entries = new SortedSet<TimerData>();
 
 		private Settings _settings;
+		private AlarmCompletionHandler _alarmCompletionHandler;
 
 		public void Init(PluginInitContext context)
 		{
@@ -25,6 +26,8 @@ namespace ctRy.WoxTimer
 				? Settings.DefaultFileName
 				: Path.Combine(context.CurrentPluginMetadata.PluginDirectory, Settings.DefaultFileName));
 			_settings.Load();
+			
+			_alarmCompletionHandler = new AlarmCompletionHandler(context?.API, _settings);
 		}
 
 		public Control CreateSettingPanel()
@@ -140,12 +143,9 @@ namespace ctRy.WoxTimer
 			Thread.Sleep(secs * 1000);
 			if (!Entries.Contains(timerData))
 				return;
+			
 			_context.API.ShowMsg("Timer ended", "", "Images\\icon.png");
-			System.Media.SystemSounds.Beep.Play();
-			Thread.Sleep(1000);
-			System.Media.SystemSounds.Beep.Play();
-			Thread.Sleep(1000);
-			System.Media.SystemSounds.Beep.Play();
+			_alarmCompletionHandler.Complete();
 			Entries.Remove(timerData);
 		}
 	}
