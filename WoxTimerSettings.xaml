@@ -1,0 +1,25 @@
+<UserControl x:Class="ctRy.WoxTimer.WoxTimerSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ctRy.WoxTimer"
+             mc:Ignorable="d"
+             Loaded="WoxTimerSettings_OnLoaded"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Border BorderBrush="Gray" Margin="10" BorderThickness="1">
+        <Grid VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" x:Name="UseCustomAlarmTone" Content="Use custom alarm tone" Margin="10"
+                      HorizontalAlignment="Left" />
+            <Label Grid.Row="1" x:Name="Label" Content="Path to alarm tone sound file:" HorizontalAlignment="Left" Margin="10,10,0,0"
+                   Width="180" />
+            <TextBox Grid.Row="1" x:Name="AlarmTonePath" Height="23" Margin="180,12,48,0" TextWrapping="Wrap" />
+            <Button Grid.Row="1" x:Name="PickPath" Content="..." HorizontalAlignment="Right" Margin="0,12,10,0"
+                    Width="33" Height="23" />
+        </Grid>
+    </Border>
+</UserControl>

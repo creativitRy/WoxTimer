@@ -1,17 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Controls;
 using Wox.Plugin;
 
 // ReSharper disable once CheckNamespace
 namespace ctRy.WoxTimer
 {
-	public class Main : IPlugin
+	public class Main : IPlugin, ISettingProvider
 	{
 		private PluginInitContext _context;
 		private readonly SortedSet<TimerData> Entries = new SortedSet<TimerData>();
+
+		private Settings _settings;
+
+		public void Init(PluginInitContext context)
+		{
+			_context = context;
+
+			_settings = new Settings(context == null
+				? Settings.DefaultFileName
+				: Path.Combine(context.CurrentPluginMetadata.PluginDirectory, Settings.DefaultFileName));
+			_settings.Load();
+		}
+
+		public Control CreateSettingPanel()
+		{
+			return new WoxTimerSettings(_settings);
+		}
 
 		public List<Result> Query(Query query)
 		{
@@ -128,92 +147,6 @@ namespace ctRy.WoxTimer
 			Thread.Sleep(1000);
 			System.Media.SystemSounds.Beep.Play();
 			Entries.Remove(timerData);
-		}
-
-		public void Init(PluginInitContext context)
-		{
-			_context = context;
-		}
-
-		private struct TimerData : IEquatable<TimerData>, IComparable<TimerData>, IComparable
-		{
-			private static int NextId;
-			public readonly int Id;
-			public readonly DateTime Time;
-
-			public TimerData(DateTime time)
-			{
-				Id = NextId;
-				NextId++;
-				Time = time;
-			}
-
-			public bool Equals(TimerData other)
-			{
-				return Id == other.Id && Time.Equals(other.Time);
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj))
-					return false;
-				return obj.GetType() == GetType() && Equals((TimerData) obj);
-			}
-
-			public override int GetHashCode()
-			{
-				unchecked
-				{
-					return (Id * 397) ^ Time.GetHashCode();
-				}
-			}
-
-			public static bool operator ==(TimerData left, TimerData right)
-			{
-				return Equals(left, right);
-			}
-
-			public static bool operator !=(TimerData left, TimerData right)
-			{
-				return !Equals(left, right);
-			}
-
-			public int CompareTo(TimerData other)
-			{
-				var timeComparison = Time.CompareTo(other.Time);
-				if (timeComparison != 0)
-					return timeComparison;
-				return Id.CompareTo(other.Id);
-			}
-
-			public int CompareTo(object obj)
-			{
-				if (ReferenceEquals(null, obj))
-					return 1;
-				return obj is TimerData other
-					? CompareTo(other)
-					: throw new ArgumentException($"Object must be of type {nameof(TimerData)}");
-			}
-
-			public static bool operator <(TimerData left, TimerData right)
-			{
-				return left.CompareTo(right) < 0;
-			}
-
-			public static bool operator >(TimerData left, TimerData right)
-			{
-				return left.CompareTo(right) > 0;
-			}
-
-			public static bool operator <=(TimerData left, TimerData right)
-			{
-				return left.CompareTo(right) <= 0;
-			}
-
-			public static bool operator >=(TimerData left, TimerData right)
-			{
-				return left.CompareTo(right) >= 0;
-			}
 		}
 	}
 }
