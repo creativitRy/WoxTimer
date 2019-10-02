@@ -26,7 +26,7 @@ namespace ctRy.WoxTimer
 				? Settings.DefaultFileName
 				: Path.Combine(context.CurrentPluginMetadata.PluginDirectory, Settings.DefaultFileName));
 			_settings.Load();
-			
+
 			_alarmCompletionHandler = new AlarmCompletionHandler(context?.API, _settings);
 		}
 
@@ -143,7 +143,7 @@ namespace ctRy.WoxTimer
 			Thread.Sleep(secs * 1000);
 			if (!Entries.Contains(timerData))
 				return;
-			
+
 			_context.API.ShowMsg("Timer ended", "", "Images\\icon.png");
 			_alarmCompletionHandler.Complete();
 			Entries.Remove(timerData);

@@ -1,5 +1,3 @@
-// ReSharper disable once CheckNamespace
-
 using System.IO;
 using Newtonsoft.Json;
 

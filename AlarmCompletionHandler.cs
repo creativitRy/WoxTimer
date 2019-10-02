@@ -40,7 +40,7 @@ namespace ctRy.WoxTimer
 		private void PlaySound()
 		{
 			// credits to LesterCovax for help and ayZagen for suggestion
-			
+
 			_player.SoundLocation = _settings.AlarmTonePath;
 			try
 			{
@@ -50,7 +50,7 @@ namespace ctRy.WoxTimer
 			{
 				_api.ShowMsg($"An exception has occured while attempting to play {_settings.AlarmTonePath}", e.Message,
 					"Images\\icon.png");
-				
+
 				Console.Error.WriteLine(e);
 			}
 		}

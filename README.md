@@ -25,3 +25,7 @@ Remove a timer by typing
 List active timers by typing
 
 `timer` or `timer list`
+
+### Preferences
+
+You can set the timer to play a wav file once it completes. Open the Wox settings, go to plugins, go to Timer, and edit as needed.
